@@ -1,6 +1,7 @@
+"use strict";
+
 // This loads the environment variables from the .env file
 require('dotenv-extended').load();
-
 var http = require('http');
 var builder = require('botbuilder');
 var restify = require('restify');
@@ -24,7 +25,6 @@ var connector = new builder.ChatConnector({
 
 // Listen for messages
 server.post('/api/messages', connector.listen());
-
 
 
 // Create your bot with a function to receive messages from the user
@@ -52,22 +52,18 @@ var bot = new builder.UniversalBot(connector, function (session) {
     // http.get(attachment.contentUrl, res => res.pipe(fs.createWriteStream('1.csv')));
     
         
-
-var csv_Data= ""; 
-
-    http.get(attachment.contentUrl, res => res.pipe(fs.createReadStream("1.csv")
-    .pipe(csv())
-    .on("data", function(data){
-        csv_Data = csv_Data + data;
-         console.log(data);
-    })
-    .on("end", function(){
-         console.log("done");
-    })));
-
-    session.send("The data in the csv is : %s",csv_Data);
-        
-
+//Reads the CSV data
+var stream = fs.createReadStream('University Dataset/studentAssessment.csv');
+                csv
+                    .fromStream(stream, {headers : true})
+                    .on("data", function(data){
+                         console.log("Start of parsing...");
+                         console.log(data);
+                    })
+                    .on("end", function(data){
+                         console.log(data);
+                         console.log("End of parsing");
+                    })
         /*3/http.get(attachment.contentUrl, function(res) {
         console.log("Got response: " + res.statusCode);
             }).on('error', function(e) {
